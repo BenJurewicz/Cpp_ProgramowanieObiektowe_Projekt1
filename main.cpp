@@ -1,6 +1,8 @@
-#include <iostream>
+#include "console.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    Console* console = Console::getInstance();
+    *console << moveCursor(1,2) << Color::GreenOnBlack << "hello world" << std::endl;
+    console->refreshWindow();
     return 0;
 }

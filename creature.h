@@ -1,0 +1,10 @@
+#ifndef PROJEKT1CPP_CREATURE_H
+#define PROJEKT1CPP_CREATURE_H
+
+
+class Areature {
+
+};
+
+
+#endif //PROJEKT1CPP_CREATURE_H
