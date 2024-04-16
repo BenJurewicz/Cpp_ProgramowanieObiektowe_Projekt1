@@ -97,12 +97,6 @@ Console::~Console() {
     endwin();
 }
 
-//Console& Console::operator<<(const Color& color){
-//    if(hasColors){
-//        wattron(win, COLOR_PAIR(color));
-//    }
-//    return *this;
-//}
 
 
 Console& Console::operator<<(std::ostream &(*func)(std::ostream &)){
@@ -114,11 +108,6 @@ Console& Console::operator<<(std::ostream &(*func)(std::ostream &)){
     return *this;
 }
 
-//Console &Console::operator<<(const std::function<Console &(Console &)> &func) {
-//    func(*this);
-//    return *this;
-//}
-
 std::function<Console&(Console&)> moveCursor(int y, int x) {
     return [=](Console& console) -> Console& {
         wmove(console.win, y, x);
@@ -126,11 +115,15 @@ std::function<Console&(Console&)> moveCursor(int y, int x) {
     };
 }
 
-//Console& flushBuffer(Console& console) {
-//    waddstr(console.win, console.printBuffer.str().c_str());
-//    console.printBuffer.str("");
-//    console.printBuffer.clear();
-//    console.refreshWindow();
-//    return console;
-//}
+Console& flushBuffer(Console& console) {
+    waddstr(console.win, console.printBuffer.str().c_str());
+    console.printBuffer.str("");
+    console.printBuffer.clear();
+    console.refreshWindow();
+    return console;
+}
 
+Console &Console::operator<<(Console &(*value)(Console &)) {
+    value(*this);
+    return *this;
+}
