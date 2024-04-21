@@ -1,16 +1,19 @@
 #include "console.h"
 
+Console *Console::instance = nullptr;
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "readability-convert-member-functions-to-static"
-void Console::createColorPairs(){
+
+void Console::createColorPairs() {
     init_pair(WhiteOnBlack, COLOR_WHITE, COLOR_BLACK);
     init_pair(GreenOnBlack, COLOR_GREEN, COLOR_BLACK);
 }
+
 #pragma clang diagnostic pop
 
-void Console::initColors(){
-    if(!has_colors()){
+[[maybe_unused]] void Console::initColors() {
+    if (!has_colors()) {
         hasColors = false;
         return;
     }
@@ -19,27 +22,38 @@ void Console::initColors(){
     createColorPairs();
 }
 
-void Console::initNcurses(){
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "readability-convert-member-functions-to-static"
+
+void Console::initNcurses() {
     initscr();
     noecho();
     cbreak();
     curs_set(0);
-    initColors();
+//    initColors();
 }
 
-Console::Console() {
-    winWidth = windowWidth;
-    winHeight = windowHeight;
+#pragma clang diagnostic pop
+
+Console::Console(int width, int height) {
+    winWidth = width;
+    winHeight = height;
 
     initNcurses();
 
     win = newwin(winHeight, winWidth, 0, 0);
 }
 
-Console* Console::instance = nullptr;
-Console* Console::getInstance() {
-    if(instance == nullptr) {
-        instance = new Console();
+Console *Console::init(int width, int height) {
+    if (instance == nullptr) {
+        instance = new Console(width, height);
+    }
+    return instance;
+}
+
+Console *Console::getInstance() {
+    if (instance == nullptr) {
+        throw std::runtime_error("Console has not been initialized");
     }
     return instance;
 }
@@ -48,19 +62,32 @@ void Console::refreshWindow() {
     wrefresh(win);
 }
 
-//void Console::mvPrintf(int y, int x, const char *text, ...){
-//    va_list args;
-//    va_start(args, text);
-//    mvwprintw(win, y, x, text, args);
-////    waddstr(win, str);
-//    va_end(args);
-//}
-
-void Console::mvPutCh(int y, int x, char ch){
+[[maybe_unused]] void Console::drawChar(int y, int x, char ch) {
     mvwaddch(win, y, x, ch);
 }
 
-std::string Console::getStringFromUser() {
+void Console::drawHorizontalLine(int y, int x, int length, chtype character) {
+    mvwhline(win, y, x, character, length);
+}
+
+void Console::drawVerticalLine(int y, int x, int length, chtype character) {
+    mvwvline(win, y, x, character, length);
+}
+
+[[maybe_unused]] void Console::drawBorder(int y, int x, int height, int width) {
+    drawHorizontalLine(y, x, width - 1, ACS_HLINE);
+    drawHorizontalLine(y + height - 1, x, width - 1, ACS_HLINE);
+
+    drawVerticalLine(y, x, height - 1, ACS_VLINE);
+    drawVerticalLine(y, x + width - 1, height - 1, ACS_VLINE);
+
+    mvwaddch(win, y, x, ACS_ULCORNER);
+    mvwaddch(win, y, x + width - 1, ACS_URCORNER);
+    mvwaddch(win, y + height - 1, x, ACS_LLCORNER);
+    mvwaddch(win, y + height - 1, x + width - 1, ACS_LRCORNER);
+}
+
+[[maybe_unused]] std::string Console::getStringFromUser() {
     echo();
     curs_set(1);
     nocbreak();
@@ -69,7 +96,7 @@ std::string Console::getStringFromUser() {
     std::string input;
     getch();
     char ch = getChar();
-    while(ch != '\n') {
+    while (ch != '\n') {
         input.push_back(ch);
         ch = getChar();
     }
@@ -83,11 +110,18 @@ std::string Console::getStringFromUser() {
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "readability-convert-member-functions-to-static"
+
 inline char Console::getChar() {
     return getch();
 //    return (char)wgetch(win);
 }
+
 #pragma clang diagnostic pop
+
+Console &Console::operator<<(Console &(*value)(Console &)) {
+    value(*this);
+    return *this;
+}
 
 Console::~Console() {
     echo();
@@ -97,25 +131,14 @@ Console::~Console() {
     endwin();
 }
 
-
-
-Console& Console::operator<<(std::ostream &(*func)(std::ostream &)){
-    // TODO: remake this so it will work with flushBuffer instead of std::endl
-    waddstr(win, printBuffer.str().c_str());
-    printBuffer.str("");
-    printBuffer.clear();
-    refreshWindow(); // TODO: probbably should remove this
-    return *this;
-}
-
-std::function<Console&(Console&)> moveCursor(int y, int x) {
-    return [=](Console& console) -> Console& {
+std::function<Console &(Console &)> moveCursor(int y, int x) {
+    return [=](Console &console) -> Console & {
         wmove(console.win, y, x);
         return console;
     };
 }
 
-Console& flushBuffer(Console& console) {
+Console &flushBuffer(Console &console) {
     waddstr(console.win, console.printBuffer.str().c_str());
     console.printBuffer.str("");
     console.printBuffer.clear();
@@ -123,7 +146,21 @@ Console& flushBuffer(Console& console) {
     return console;
 }
 
-Console &Console::operator<<(Console &(*value)(Console &)) {
-    value(*this);
-    return *this;
+Console &clearBuffer(Console &console) {
+    console.printBuffer.str("");
+    console.printBuffer.clear();
+    return console;
+}
+
+int Console::getWidth() const {
+    return winWidth;
+}
+
+int Console::getHeight() const {
+    return winHeight;
+}
+
+void Console::destroyInstance() {
+    delete instance;
+    instance = nullptr;
 }

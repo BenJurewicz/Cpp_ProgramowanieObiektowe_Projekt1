@@ -6,8 +6,8 @@
 #include <sstream>
 #include <functional>
 
-constexpr int windowWidth = 80;
-constexpr int windowHeight = 20;
+//constexpr int windowWidth = 100;
+//constexpr int windowHeight = 60;
 
 /**
  * @brief Pass to the Console stream operator to change the color of the text
@@ -27,23 +27,65 @@ class Console {
     int winHeight;
 
     void createColorPairs();
-    void initColors();
+
+    [[maybe_unused]] void initColors();
     void initNcurses();
 
-    Console();
+    Console(int width, int height);
 public:
+    static Console* init(int width = 100, int height = 60);
+    static Console* getInstance();
+    static void destroyInstance();
 
-
-    static Console *getInstance();
+    int getWidth() const;
+    int getHeight() const;
 
     void refreshWindow();
 
-    void mvPutCh(int y, int x, char ch);
+    [[maybe_unused]] void drawChar(int y, int x, char ch);
 
-    std::string getStringFromUser();
-    char getChar();
+    /**
+     *  @Note There are special ncurses characters that can be use used instead of chars
+     *  Special characters list:
+     *  <ul>
+     *     <li> ACS_HLINE: Horizontal line </li>
+     *     <li> ACS_VLINE: Vertical line </li>
+     *     <li> ACS_ULCORNER: Upper left-hand corner </li>
+     *     <li> ACS_URCORNER: Upper right-hand corner </li>
+     *     <li> ACS_LLCORNER: Lower left-hand corner </li>
+     *     <li> ACS_LRCORNER: Lower right-hand corner </li>
+     *     <li> ACS_LTEE: Tee pointing right </li>
+     *     <li> ACS_RTEE: Tee pointing left </li>
+     *     <li> ACS_BTEE: Tee pointing up </li>
+     *     <li> ACS_TTEE: Tee pointing down </li>
+     *     <li> ACS_PLUS: Large plus or crossover </li>
+     *  </ul>
+     */
+    void drawHorizontalLine(int y, int x, int length, chtype character = 0);
 
-    Console& operator<<(std::ostream &(*func)(std::ostream &)); // this is for std::endl to flush
+    /**
+     *  @Note There are special ncurses characters that can be use used instead of chars
+     *  Special characters list:
+     *  <ul>
+     *     <li> ACS_HLINE: Horizontal line </li>
+     *     <li> ACS_VLINE: Vertical line </li>
+     *     <li> ACS_ULCORNER: Upper left-hand corner </li>
+     *     <li> ACS_URCORNER: Upper right-hand corner </li>
+     *     <li> ACS_LLCORNER: Lower left-hand corner </li>
+     *     <li> ACS_LRCORNER: Lower right-hand corner </li>
+     *     <li> ACS_LTEE: Tee pointing right </li>
+     *     <li> ACS_RTEE: Tee pointing left </li>
+     *     <li> ACS_BTEE: Tee pointing up </li>
+     *     <li> ACS_TTEE: Tee pointing down </li>
+     *     <li> ACS_PLUS: Large plus or crossover </li>
+     *  </ul>
+     */
+    void drawVerticalLine(int y, int x, int length, chtype character = 0);
+
+    [[maybe_unused]] void drawBorder(int y, int x, int height, int width);
+
+    [[maybe_unused]] std::string getStringFromUser();
+    [[maybe_unused]] char getChar();
 
     Console& operator<<(Console& (*value)(Console&));
 
@@ -55,17 +97,18 @@ public:
 
     friend std::function<Console&(Console&)> moveCursor(int y, int x);
     friend Console& flushBuffer(Console& console);
+    friend Console& clearBuffer(Console& console);
 
     ~Console();
 };
 
-template<>
+template<> // This is needed for flushBuffer
 inline Console& Console::operator<< <Console& (*)(Console&) >(Console& (* const &value)(Console&)){
     value(*this);
     return *this;
 }
 
-template<>
+template<> // This is needed for moveCursor
 inline Console& Console::operator<< <std::function<Console&(Console&)> >(const std::function<Console&(Console&)> &value){
     return value(*this);
 }
@@ -92,5 +135,7 @@ std::function<Console&(Console&)> moveCursor(int y, int x);
  * @return the same Console object
  */
 Console& flushBuffer(Console& console);
+
+Console& clearBuffer(Console& console);
 
 #endif //PROJEKT1CPP_CONSOLE_H
