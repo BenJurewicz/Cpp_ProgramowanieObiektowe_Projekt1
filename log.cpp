@@ -1,6 +1,6 @@
 #include "log.h"
 
-Log *Log::instance = nullptr;
+std::unique_ptr<Log> Log::instance = nullptr;
 
 Log::Log(int maxItems) : maxItems(maxItems) {}
 
@@ -39,21 +39,21 @@ void Log::add(const std::string &message) {
 
 Log *Log::init(int maxItems) {
     if (instance == nullptr) {
-        instance = new Log(maxItems);
+//        instance = new Log(maxItems);
+        instance = std::unique_ptr<Log>(new Log(maxItems));
     }
-    return instance;
+    return instance.get();
 }
 
 Log *Log::getInstance() {
     if (instance == nullptr) {
         throw std::runtime_error("Log instance not created");
     }
-    return instance;
+    return instance.get();
 }
 
 void Log::destroyInstance() {
-    delete instance;
-    instance = nullptr;
+    instance.reset();
 }
 
 

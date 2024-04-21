@@ -29,6 +29,20 @@ add_executable(Projekt1Cpp main.cpp
         creatures/animals/sheep.h
         log.cpp
         log.h
+        creatures/plants/grass.cpp
+        creatures/plants/grass.h
+        creatures/plants/mlecz.cpp
+        creatures/plants/mlecz.h
+        creatures/plants/guarana.cpp
+        creatures/plants/guarana.h
+        creatures/plants/wilczeJagody.cpp
+        creatures/plants/wilczeJagody.h
+        creatures/plants/barszczSosnowskiego.cpp
+        creatures/plants/barszczSosnowskiego.h
+        creatures/animals/fox.cpp
+        creatures/animals/fox.h
+        creatures/animals/antelope.cpp
+        creatures/animals/antelope.h
 )
 
 target_link_libraries(Projekt1Cpp ${CURSES_LIBRARIES})

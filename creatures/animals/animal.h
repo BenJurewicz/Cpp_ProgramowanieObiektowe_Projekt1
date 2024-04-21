@@ -1,7 +1,6 @@
 #ifndef PROJEKT1CPP_ANIMAL_H
 #define PROJEKT1CPP_ANIMAL_H
 
-//#include "../creature.h"
 #include "../creature.h"
 
 class World;
@@ -10,7 +9,11 @@ class Animal : public Creature {
 protected:
     Animal(int strength, int initiative, Point<int> position, World *world);
 
-    virtual void move();
+    /**
+     * Move the animal to a random position and handle possible collision
+     * @param correctNewPosition the position to move to, make sure it is correct as there is no checking
+     */
+    virtual void move(Point<int> correctNewPosition);
 
     virtual void tryMating(Creature *creature);
 

@@ -65,6 +65,14 @@ public:
         return Point<T>(_x - other._x, _y - other._y);
     }
 
+    Point<T> operator+(const T &other) const {
+        return Point<T>(_x + other, _y + other);
+    }
+
+    Point<T> operator-(const T &other) const {
+        return Point<T>(_x - other, _y - other);
+    }
+
     bool operator==(const Point<T> &other) const {
         return _x == other._x && _y == other._y;
     }
@@ -73,23 +81,12 @@ public:
         return _x != other._x || _y != other._y;
     }
 
-    bool operator<(const Point<T> &other) const {
-        return _x < other._x || _y < other._y;
-    }
-
-    bool operator<=(const Point<T> &other) const {
-        return _x <= other._x || _y <= other._y;
-    }
-
-    bool operator>(const Point<T> &other) const {
-        return _x > other._x || _y > other._y;
-    }
-
-    bool operator>=(const Point<T> &other) const {
-        return _x >= other._x || _y >= other._y;
+    bool between(const Point<T> &min, const Point<T> &max) const {
+        return min.x() <= x() && x() <= max.x() && min.y() <= y() && y() <= max.y();
     }
 
     static const Point<T> UP, DOWN, LEFT, RIGHT, ZERO;
+    static const Point<T> cardinalDirections[4];
 };
 
 Console &operator<<(Console &console, const Point<int> &point);
@@ -108,5 +105,8 @@ const Point<T> Point<T>::RIGHT = Point<T>(1, 0);
 
 template<typename T>
 const Point<T> Point<T>::ZERO = Point<T>(0, 0);
+
+template<typename T>
+const Point<T> Point<T>::cardinalDirections[4] = {Point<T>::UP, Point<T>::RIGHT, Point<T>::DOWN, Point<T>::LEFT};
 
 #endif //PROJEKT1CPP_POINT_H

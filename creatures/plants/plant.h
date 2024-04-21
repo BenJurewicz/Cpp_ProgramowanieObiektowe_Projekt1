@@ -7,11 +7,11 @@ class Plant : public Creature {
 protected:
     Plant(int strength, Point<int> position, World *world);
 
+    virtual void trySpreading() const;
+
 public:
 
-//    void doTurn();
-//    void collide();
-//    char getIcon();
+    void doTurn() override;
 };
 
 

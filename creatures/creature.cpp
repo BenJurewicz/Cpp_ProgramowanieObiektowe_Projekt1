@@ -6,31 +6,45 @@ Creature::Creature(int strength, int initiative, Point<int> position, World *wor
                                                                                       age(0),
                                                                                       isAlive(true) {}
 
-Point<int> Creature::getRandomCorrectNeighbour(bool squareMustBeFree) {
-//    Point<int> neighbours[4] = {Point<int>(1, 0), Point<int>(-1, 0), Point<int>(0, 1), Point<int>(0, -1)};
-    Point<int> neighbours[4] = {Point<int>::UP, Point<int>::RIGHT, Point<int>::DOWN, Point<int>::LEFT};
+Point<int> Creature::getRandomCorrectNeighbour(bool squareMustBeFree) const {
+    std::vector<Point<int>> neighbours = getNeighbours();
+    std::shuffle(neighbours.begin(), neighbours.end(), Rng::getGenerator());
 
-    Point<int> newPos;
-    int neighbourId = Rng::intFromRange(0, 3);
-    int tries = 1;
-    while (true) {
-        newPos = position + neighbours[neighbourId];
-        if (Point<int>::ZERO > newPos || newPos > (world->getDimensions() - Point<int>(1, 1))) {
-            neighbourId = (neighbourId + 1) % 4;
-            tries++;
-            if (tries > 4) {
-                return Point<int>(-1, -1);
-            }
-        } else {
-            break;
-        }
+    if (neighbours.empty()) {
+        return Point<int>(-1, -1);
+    }
+    if (!squareMustBeFree) {
+        return neighbours.at(0);
     }
 
-    return newPos;
+    for (auto &neighbour: neighbours) {
+        if (!world->isOccupied(neighbour)) {
+            return neighbour;
+        }
+    }
+    return Point<int>(-1, -1);
 }
+
+std::vector<Point<int>> Creature::getNeighbours() const {
+    const Point<int> worldDimensions = world->getDimensions();
+    std::vector<Point<int>> neighbours;
+    Point<int> newPos;
+
+    for (Point<int> direction: Point<int>::cardinalDirections) {
+        newPos = position + direction;
+        if (newPos.between(Point<int>::ZERO, worldDimensions - 1)) {
+            neighbours.push_back(newPos);
+        }
+    }
+    return neighbours;
+};
 
 int Creature::getStrength() const {
     return strength;
+}
+
+void Creature::setStrength(int newStrength) {
+    strength = newStrength;
 }
 
 int Creature::getInitiative() const {
@@ -52,7 +66,8 @@ void Creature::setPosition(Point<int> point) {
 std::string Creature::toString() const {
     std::stringstream ss;
     ss << getIcon() << ": " << position.toString();
-//    ss << " Age: " << age;
+    ss << " Age: " << age;
+    ss << " Str: " << strength;
     return ss.str();
 }
 
@@ -61,22 +76,45 @@ bool Creature::didDeflectAttack(Creature *creature) {
 }
 
 void Creature::collide(Creature *creature) {
-    if (creature->didDeflectAttack(creature)) {
+    if (creature->didDeflectAttack(this)) {
         return;
     }
+    if (creature->tryRunningAway(this)) {
+        return;
+    }
+    creature->handleCollision(this);
+    if (!isAlive) {
+        // in case we kill the creature in handleCollision
+        return;
+    }
+    fight(creature);
+}
+
+void Creature::fight(Creature *creature) {
     Log &log = *Log::getInstance();
     if (strength >= creature->getStrength()) {
         log.add(toString() + " attacked and killed " + creature->toString());
-        creature->isAlive = false;
+        creature->kill();
     } else {
         log.add(toString() + " attacked and was killed by " + creature->toString());
-        isAlive = false;
+        kill();
     }
 }
 
 bool Creature::getIsAlive() const {
     return isAlive;
 }
+
+void Creature::handleCollision(Creature *collider) {}
+
+void Creature::kill() {
+    isAlive = false;
+}
+
+bool Creature::tryRunningAway(Creature *creature) {
+    return false;
+}
+
 
 Console &operator<<(Console &console, const Creature &creature) {
     console << creature.toString();

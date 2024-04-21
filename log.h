@@ -3,11 +3,12 @@
 
 #include <list>
 #include <string>
+#include <memory>
 
 #include "console.h"
 
 class Log {
-    static Log *instance;
+    static std::unique_ptr<Log> instance;
 
     int maxItems;
     std::list<std::string> messages;

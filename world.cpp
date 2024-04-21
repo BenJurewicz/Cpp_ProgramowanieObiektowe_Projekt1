@@ -5,6 +5,13 @@
 #include "rng.h"
 #include "creatures/animals/wolf.h"
 #include "creatures/animals/sheep.h"
+#include "creatures/plants/mlecz.h"
+#include "creatures/plants/grass.h"
+#include "creatures/plants/guarana.h"
+#include "creatures/plants/wilczeJagody.h"
+#include "creatures/plants/barszczSosnowskiego.h"
+#include "creatures/animals/fox.h"
+#include "creatures/animals/antelope.h"
 
 void World::resizeMap() {
     map.resize(worldHeight);
@@ -28,25 +35,44 @@ Point<int> World::getRandomFreeCell() {
     return pos;
 }
 
+void World::addCreature(const std::shared_ptr<Creature> &creature) {
+    creatures.push_back(creature);
+    Point<int> pos = creature->getPosition();
+    map[pos.getY()][pos.getX()][0] = creatures.back();
+}
+
 template<class S>
-void World::createSpecies(int minSpeciesCount, int maxSpeciesCount) {
+void World::createSpecies() {
     int speciesCount = Rng::intFromRange(minSpeciesCount, maxSpeciesCount);
     for (int i = 0; i < speciesCount; i++) {
         Point<int> pos = getRandomFreeCell();
-        creatures.push_back(std::make_shared<S>(pos, this));
-        map[pos.getY()][pos.getX()][0] = creatures.back();
+        addCreature(std::make_shared<S>(pos, this));
     }
 }
 
 void World::createCreatures() {
-    int maxSpeciesCount = 10;
-    int minSpeciesCount = 9;
-    createSpecies<Wolf>(minSpeciesCount, maxSpeciesCount);
-    createSpecies<Sheep>(minSpeciesCount, maxSpeciesCount);
-
+    /// Animals
+    createSpecies<Wolf>();
+    createSpecies<Sheep>();
+    createSpecies<Fox>();
+    createSpecies<Antelope>();
+    /// Plants
+    createSpecies<Mlecz>();
+    createSpecies<Grass>();
+    createSpecies<Guarana>();
+    createSpecies<WilczeJagody>();
+    createSpecies<BarszczSosnowskiego>();
 }
 
-World::World(int worldHeight, int worldWidth) : worldHeight(worldHeight), worldWidth(worldWidth) {
+World::World(int worldHeight, int worldWidth) : World(worldHeight, worldWidth, 1,
+                                                      (int) (worldWidth * worldHeight * 0.05)) {}
+
+World::World(int worldHeight, int worldWidth, int minSpeciesCount, int maxSpeciesCount) : worldHeight(worldHeight),
+                                                                                          worldWidth(worldWidth),
+                                                                                          minSpeciesCount(
+                                                                                                  minSpeciesCount),
+                                                                                          maxSpeciesCount(
+                                                                                                  maxSpeciesCount) {
     resizeMap();
     createCreatures();
 }
@@ -81,17 +107,21 @@ void World::removeDeadCreatures() {
     creatures.remove_if([](const std::shared_ptr<Creature> &creature) { return !creature->getIsAlive(); });
 }
 
-void World::doTurn() {
-    auto compare = [](const std::shared_ptr<Creature> &a, const std::shared_ptr<Creature> &b) {
+void World::sortCreaturesByPriority() {
+    creatures.sort([](const std::shared_ptr<Creature> &a, const std::shared_ptr<Creature> &b) {
         int ai = a->getInitiative();
         int bi = b->getInitiative();
         return ai == bi ? a->getAge() > b->getAge() : ai > bi;
-    };
+    });
+}
 
+void World::doTurn() {
     removeDeadCreatures();
-    creatures.sort(compare);
+    sortCreaturesByPriority();
     for (const auto &creature: creatures) {
-        creature->doTurn();
+        if (creature->getIsAlive()) {
+            creature->doTurn();
+        }
     }
 }
 
@@ -107,7 +137,7 @@ bool World::isOccupied(Point<int> point) {
     return map.at(point.getY()).at(point.getX()).at(0).get() != nullptr;
 }
 
-[[maybe_unused]] void World::startLoopNoInput(Console &console, int turns) {
+void World::startLoopNoInput(Console &console, int turns) {
     console << clearBuffer;
     drawMap(console, 1, 1);
     console.refreshWindow();
@@ -115,9 +145,10 @@ bool World::isOccupied(Point<int> point) {
         doTurn();
         drawMap(console, 1, 1);
         Log::getInstance()->draw(worldHeight + 3, 1, console.getWidth() - 2, 18);
-        console << moveCursor(1, 1) << "Animal count: " << creatures.size() << flushBuffer;
+        console << moveCursor(1, 1) << "Creature count: " << creatures.size()
+                << flushBuffer; // TODO remove before submission
         console.refreshWindow();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
     }
 }
 

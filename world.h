@@ -11,14 +11,9 @@
 
 class Creature;
 
-/**
- * Describes how many of a single species can be present in the world.
- * Maximum number of species = maxSpeciesCountMultiplier * worldHeight * worldWidth
- */
-constexpr double maxSpeciesCountMultiplier = 0.05;
-
 class World {
     int worldHeight, worldWidth;
+    int minSpeciesCount, maxSpeciesCount;
     std::vector<std::vector<std::vector<std::shared_ptr<Creature> > > > map;
     std::list<std::shared_ptr<Creature> > creatures;
 
@@ -33,14 +28,18 @@ class World {
      * @tparam S has to derive from Creature and have a constructor that takes a Point<int> as an argument
      */
     template<class S>
-    void createSpecies(int minSpeciesCount, int maxSpeciesCount);
+    void createSpecies();
 
     void createCreatures();
+
+    void sortCreaturesByPriority();
 
     void removeDeadCreatures();
 
 public:
     World(int worldHeight, int worldWidth);
+
+    World(int worldHeight, int worldWidth, int minSpeciesCount, int maxSpeciesCount);
 
     [[maybe_unused]] void startLoopNoInput(Console &console, int turns = 10);
 
@@ -55,6 +54,9 @@ public:
     [[nodiscard]] Point<int> getDimensions() const;
 
     void moveCreature(const std::shared_ptr<Creature> &creature, Point<int> point);
+
+    void addCreature(const std::shared_ptr<Creature> &creature);
+
 
 };
 

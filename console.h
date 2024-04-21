@@ -5,9 +5,7 @@
 #include <ncurses.h>
 #include <sstream>
 #include <functional>
-
-//constexpr int windowWidth = 100;
-//constexpr int windowHeight = 60;
+#include <memory>
 
 /**
  * @brief Pass to the Console stream operator to change the color of the text
@@ -18,7 +16,7 @@ typedef enum {
 } Color;
 
 class Console {
-    static Console* instance;
+    static std::unique_ptr<Console> instance;
     std::stringstream printBuffer;
 
     WINDOW *win{};

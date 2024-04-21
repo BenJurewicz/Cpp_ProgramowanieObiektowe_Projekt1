@@ -1,6 +1,6 @@
 #include "console.h"
 
-Console *Console::instance = nullptr;
+std::unique_ptr<Console> Console::instance = nullptr;
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "readability-convert-member-functions-to-static"
@@ -46,16 +46,16 @@ Console::Console(int width, int height) {
 
 Console *Console::init(int width, int height) {
     if (instance == nullptr) {
-        instance = new Console(width, height);
+        instance = std::unique_ptr<Console>(new Console(width, height));
     }
-    return instance;
+    return instance.get();
 }
 
 Console *Console::getInstance() {
     if (instance == nullptr) {
         throw std::runtime_error("Console has not been initialized");
     }
-    return instance;
+    return instance.get();
 }
 
 void Console::refreshWindow() {
@@ -171,7 +171,6 @@ int Console::getHeight() const {
 }
 
 void Console::destroyInstance() {
-    delete instance;
-    instance = nullptr;
+    instance.reset();
 }
 
