@@ -7,8 +7,6 @@ class Wolf : public Animal {
 public:
     Wolf(Point<int> startingPosition, World *world);
 
-    void collision() override;
-
     [[nodiscard]] char getIcon() const override;
 };
 

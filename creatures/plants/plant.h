@@ -3,13 +3,14 @@
 
 #include "../creature.h"
 
-class Plant : public Creature{
+class Plant : public Creature {
 protected:
     Plant(int strength, Point<int> position, World *world);
+
 public:
 
 //    void doTurn();
-//    void collision();
+//    void collide();
 //    char getIcon();
 };
 

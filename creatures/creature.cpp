@@ -51,12 +51,31 @@ void Creature::setPosition(Point<int> point) {
 
 std::string Creature::toString() const {
     std::stringstream ss;
-    ss << getIcon() << ": " << position.toString() << " St: " << strength << " In: " << initiative;
+    ss << getIcon() << ": " << position.toString();
+//    ss << " Age: " << age;
     return ss.str();
 }
 
-bool Creature::didDeflectAttack() {
+bool Creature::didDeflectAttack(Creature *creature) {
     return false;
+}
+
+void Creature::collide(Creature *creature) {
+    if (creature->didDeflectAttack(creature)) {
+        return;
+    }
+    Log &log = *Log::getInstance();
+    if (strength >= creature->getStrength()) {
+        log.add(toString() + " attacked and killed " + creature->toString());
+        creature->isAlive = false;
+    } else {
+        log.add(toString() + " attacked and was killed by " + creature->toString());
+        isAlive = false;
+    }
+}
+
+bool Creature::getIsAlive() const {
+    return isAlive;
 }
 
 Console &operator<<(Console &console, const Creature &creature) {

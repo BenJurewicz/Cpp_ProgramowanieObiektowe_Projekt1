@@ -8,13 +8,13 @@ int main() {
     Log::init(17);
     Console::init();
     Console &console = *Console::getInstance();
-
+    console << moveCursor(0, 1) << "Benjamin Jurewicz s198326" << flushBuffer;
     int worldWidth = 20;
     int worldHeight = 20;
     World world(worldHeight, worldWidth);
 
 //    world.drawMap(console, 1, 1);
-    world.startLoopNoInput(console, 50);
+    world.startLoopNoInput(console, 500);
 //    Wolf w(Point<int>(0, 0), &world);
 //    //generate a for loop that repeates 4 times
 //    for (int i = 0; i < 4; i++) {

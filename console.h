@@ -82,7 +82,8 @@ public:
      */
     void drawVerticalLine(int y, int x, int length, chtype character = 0);
 
-    [[maybe_unused]] void drawBorder(int y, int x, int height, int width);
+    [[maybe_unused]] void drawBorder(int y, int x, int height, int width, const std::string& title = "");
+    [[maybe_unused]] void drawRectangle(int y, int x, int height, int width, chtype character = ' ');
 
     [[maybe_unused]] std::string getStringFromUser();
     [[maybe_unused]] char getChar();

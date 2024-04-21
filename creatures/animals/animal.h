@@ -10,12 +10,15 @@ class Animal : public Creature {
 protected:
     Animal(int strength, int initiative, Point<int> position, World *world);
 
-public:
     virtual void move();
 
+    virtual void tryMating(Creature *creature);
+
+public:
+
     void doTurn() override;
-//    void collision();
-//    char getIcon();
+
+    void collide(Creature *creature) override;
 };
 
 

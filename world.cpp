@@ -39,8 +39,8 @@ void World::createSpecies(int minSpeciesCount, int maxSpeciesCount) {
 }
 
 void World::createCreatures() {
-    int maxSpeciesCount = 5;
-    int minSpeciesCount = 2;
+    int maxSpeciesCount = 10;
+    int minSpeciesCount = 9;
     createSpecies<Wolf>(minSpeciesCount, maxSpeciesCount);
     createSpecies<Sheep>(minSpeciesCount, maxSpeciesCount);
 
@@ -60,7 +60,7 @@ void World::drawMapCell(Console &console, const std::vector<std::shared_ptr<Crea
 }
 
 void World::drawMap(Console &console, int y, int x) {
-    console.drawBorder(y++, x++, worldHeight + 2, worldWidth + 2);
+    console.drawBorder(y++, x++, worldHeight + 2, worldWidth + 2, "Map");
     console << clearBuffer << moveCursor(y++, x);
 
     for (const auto &row: map) {
@@ -71,12 +71,24 @@ void World::drawMap(Console &console, int y, int x) {
     }
 }
 
+void World::removeDeadCreatures() {
+    for (const auto &creature: creatures) {
+        if (!creature->getIsAlive()) {
+            Point<int> pos = creature->getPosition();
+            map[pos.getY()][pos.getX()][0].reset();
+        }
+    }
+    creatures.remove_if([](const std::shared_ptr<Creature> &creature) { return !creature->getIsAlive(); });
+}
+
 void World::doTurn() {
     auto compare = [](const std::shared_ptr<Creature> &a, const std::shared_ptr<Creature> &b) {
         int ai = a->getInitiative();
         int bi = b->getInitiative();
         return ai == bi ? a->getAge() > b->getAge() : ai > bi;
     };
+
+    removeDeadCreatures();
     creatures.sort(compare);
     for (const auto &creature: creatures) {
         creature->doTurn();
@@ -91,10 +103,6 @@ std::shared_ptr<Creature> World::getTile(Point<int> position) {
     return map[position.getY()][position.getX()][0];
 }
 
-std::function<Console &(Console &)> World::moveCursorToLogPoint() const {
-    return moveCursor(worldHeight + 3, 1);
-}
-
 bool World::isOccupied(Point<int> point) {
     return map.at(point.getY()).at(point.getX()).at(0).get() != nullptr;
 }
@@ -106,9 +114,10 @@ bool World::isOccupied(Point<int> point) {
     for (int i = 0; i < turns; i++) {
         doTurn();
         drawMap(console, 1, 1);
-        Log::getInstance()->draw(worldHeight + 3, 0);
+        Log::getInstance()->draw(worldHeight + 3, 1, console.getWidth() - 2, 18);
+        console << moveCursor(1, 1) << "Animal count: " << creatures.size() << flushBuffer;
         console.refreshWindow();
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
@@ -118,9 +127,5 @@ void World::moveCreature(const std::shared_ptr<Creature> &creature, Point<int> p
     map[point.y()][point.x()][0] = creature;
 
     creature->setPosition(point);
-}
-
-void World::clearLog(Console &console) const {
-    console.drawHorizontalLine(worldHeight + 3, 0, console.getWidth(), ' ');
 }
 

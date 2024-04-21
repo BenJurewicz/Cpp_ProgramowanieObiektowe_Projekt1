@@ -37,14 +37,12 @@ class World {
 
     void createCreatures();
 
+    void removeDeadCreatures();
+
 public:
     World(int worldHeight, int worldWidth);
 
     [[maybe_unused]] void startLoopNoInput(Console &console, int turns = 10);
-
-    [[nodiscard]] std::function<Console &(Console &)> moveCursorToLogPoint() const;
-
-    void clearLog(Console &console) const;
 
     std::shared_ptr<Creature> getTile(Point<int> position);
 
@@ -57,6 +55,7 @@ public:
     [[nodiscard]] Point<int> getDimensions() const;
 
     void moveCreature(const std::shared_ptr<Creature> &creature, Point<int> point);
+
 };
 
 

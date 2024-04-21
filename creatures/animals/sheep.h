@@ -7,8 +7,6 @@ class Sheep : public Animal {
 public:
     Sheep(Point<int> startingPosition, World *world);
 
-    void collision() override;
-
     [[nodiscard]] char getIcon() const override;
 };
 

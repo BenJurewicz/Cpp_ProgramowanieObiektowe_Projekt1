@@ -6,11 +6,6 @@
 
 Sheep::Sheep(Point<int> startingPosition, World *world) : Animal(4, 4, startingPosition, world) {}
 
-void Sheep::collision() {
-
-}
-
 char Sheep::getIcon() const {
     return 'S';
 }
-

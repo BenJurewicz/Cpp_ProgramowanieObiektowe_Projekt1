@@ -27,15 +27,17 @@ public:
 
     virtual void doTurn() = 0;
 
-    virtual void collision() = 0;
+    virtual void collide(Creature *creature);
 
-    virtual bool didDeflectAttack();
+    virtual bool didDeflectAttack(Creature *creature);
 
     [[nodiscard]] int getStrength() const;
 
     [[nodiscard]] int getInitiative() const;
 
     [[nodiscard]] int getAge() const;
+
+    [[nodiscard]] bool getIsAlive() const;
 
     [[nodiscard]] virtual char getIcon() const = 0;
 

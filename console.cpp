@@ -74,7 +74,7 @@ void Console::drawVerticalLine(int y, int x, int length, chtype character) {
     mvwvline(win, y, x, character, length);
 }
 
-[[maybe_unused]] void Console::drawBorder(int y, int x, int height, int width) {
+[[maybe_unused]] void Console::drawBorder(int y, int x, int height, int width, const std::string &title) {
     drawHorizontalLine(y, x, width - 1, ACS_HLINE);
     drawHorizontalLine(y + height - 1, x, width - 1, ACS_HLINE);
 
@@ -85,6 +85,16 @@ void Console::drawVerticalLine(int y, int x, int length, chtype character) {
     mvwaddch(win, y, x + width - 1, ACS_URCORNER);
     mvwaddch(win, y + height - 1, x, ACS_LLCORNER);
     mvwaddch(win, y + height - 1, x + width - 1, ACS_LRCORNER);
+
+    if (!title.empty()) {
+        mvwaddstr(win, y, x + 1, title.c_str());
+    }
+}
+
+void Console::drawRectangle(int y, int x, int height, int width, chtype character) {
+    for (int i = 0; i < height; i++) {
+        drawHorizontalLine(y + i, x, width, character);
+    }
 }
 
 [[maybe_unused]] std::string Console::getStringFromUser() {
@@ -132,7 +142,7 @@ Console::~Console() {
 }
 
 std::function<Console &(Console &)> moveCursor(int y, int x) {
-    return [=](Console &console) -> Console & {
+    return [&](Console &console) -> Console & {
         wmove(console.win, y, x);
         return console;
     };
@@ -164,3 +174,4 @@ void Console::destroyInstance() {
     delete instance;
     instance = nullptr;
 }
+

@@ -6,25 +6,33 @@ Animal::Animal(int strength, int initiative, Point<int> position, World *world) 
 void Animal::move() {
     Point<int> newPosition = getRandomCorrectNeighbour(false);
     Console &c = *Console::getInstance();
-    world->clearLog(c);
-    c << world->moveCursorToLogPoint();
+    Log &log = *Log::getInstance();
     if (newPosition == Point<int>(-1, -1)) {
-        c << "No space to move for a animal " << static_cast<Creature &>(*this) << flushBuffer;
+        log.add("No space to move for a animal " + toString());
         return;
     }
     if (world->isOccupied(newPosition)) {
-        c << "Collision between animals " << static_cast<Creature &>(*this) << flushBuffer;
+        collide(world->getTile(newPosition).get());
         return;
     }
-//    c << "Animal " << static_cast<Creature &>(*this) << " moved to " << newPosition
-//      << flushBuffer;
-
-    Log::getInstance()->add(
-            "Animal " + static_cast<Creature &>(*this).toString() + " moved to " + newPosition.toString() + "\n");
+//    log.add("Animal moved to " + newPosition.toString());
     world->moveCreature(shared_from_this(), newPosition);
 }
 
 void Animal::doTurn() {
     age++;
     move();
+}
+
+void Animal::collide(Creature *creature) {
+    if (typeid(*this) == typeid(*creature)) {
+        tryMating(creature);
+        Log::getInstance()->add(toString() + " tried mating with " + creature->toString());
+    } else {
+        Creature::collide(creature);
+    }
+}
+
+void Animal::tryMating(Creature *creature) {
+    // TODO implement
 }

@@ -21,11 +21,12 @@ public:
 
     static void destroyInstance();
 
-    void draw(int y, int x) const;
+    void draw(int y, int x, int width, int height) const;
 
     void add(const std::string &message);
 
-    void clear();
+    [[maybe_unused]] void clear();
+
 };
 
 
