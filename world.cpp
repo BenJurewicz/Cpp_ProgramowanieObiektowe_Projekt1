@@ -148,11 +148,12 @@ void World::startLoopNoInput(Console &console, int turns) {
     drawMap(console, 1, 1);
     Log::getInstance()->draw(worldHeight + 4, 1, console.getWidth() - 2);
     for (int i = 0; i < turns; i++) {
+        console << moveCursor(0, 1) << "Benjamin Jurewicz s198326" << flushBuffer;
         doTurn();
         drawMap(console, 1, 1);
         Log::getInstance()->draw(worldHeight + 4, 1, console.getWidth() - 2);
-        console << moveCursor(1, 1) << "Creature count: " << creatures.size()
-                << flushBuffer; // TODO remove before submission
+//        console << moveCursor(1, 1) << "Creature count: " << creatures.size()
+//                << flushBuffer;
         console.refreshWindow();
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

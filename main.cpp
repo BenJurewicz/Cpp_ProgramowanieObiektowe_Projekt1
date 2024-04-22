@@ -15,7 +15,6 @@ int main() {
     World world(worldHeight, worldWidth);
 
     world.startLoopNoInput(console, 50);
-//    char key = console.getChar();
 
     console << flushBuffer;
     console.refreshWindow();

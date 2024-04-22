@@ -36,6 +36,7 @@ void Human::doTurn() {
     age++;
 }
 
+// This whole thing was made minutes before presentation, so it's not the best code I've written
 Point<int> Human::getMoveFromUser() {
     Console &c = *Console::getInstance();
     int yDrawCord = world->getHeight() + 3;
@@ -48,7 +49,6 @@ Point<int> Human::getMoveFromUser() {
         Point<int> direction = Point<int>(-1, -1);
         char key = ' ';
         while ((key = getch()) != ERR) {
-//            c << moveCursor(0, 0) << key << flushBuffer;
             if (key == 'w' || key == 's' || key == 'a' || key == 'd') {
                 break;
             }
@@ -69,6 +69,7 @@ Point<int> Human::getMoveFromUser() {
             default:
                 c.drawHorizontalLine(yDrawCord, 0, c.getWidth(), ' ');
                 c << moveCursor(yDrawCord, 0) << "Invalid key, use w/s/a/d keys to move" << flushBuffer;
+                break;
         }
         newPos = translateDirectionToNewPosition(direction);
     }
