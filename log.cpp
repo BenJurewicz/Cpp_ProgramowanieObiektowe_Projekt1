@@ -4,16 +4,15 @@ std::unique_ptr<Log> Log::instance = nullptr;
 
 Log::Log(int maxItems) : maxItems(maxItems) {}
 
-void Log::draw(int y, int x, int width, int height) const {
+void Log::draw(int y, int x, int width) const {
     Console &c = *Console::getInstance();
     int borderY = y++;
     int borderX = x++;
-    int borderHeight = height;
     int borderWidth = width;
 
-    c.drawRectangle(borderY, borderX, borderHeight, borderWidth);
+    c.drawRectangle(borderY, borderX, maxItems + 2, borderWidth);
 
-    height -= 2;
+    int height = maxItems;
     width -= 2;
     int newY = y;
     for (const auto &message: messages) {
@@ -23,7 +22,7 @@ void Log::draw(int y, int x, int width, int height) const {
         c << moveCursor(newY++, x) << message.substr(0, width) << flushBuffer;
     }
 
-    c.drawBorder(borderY, borderX, borderHeight, borderWidth, "Log");
+    c.drawBorder(borderY, borderX, maxItems + 2, borderWidth, "Log");
 }
 
 void Log::add(const std::string &message) {

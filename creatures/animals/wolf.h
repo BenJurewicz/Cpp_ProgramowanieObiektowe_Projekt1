@@ -8,6 +8,8 @@ public:
     Wolf(Point<int> startingPosition, World *world);
 
     [[nodiscard]] char getIcon() const override;
+
+    void clone(Point<int> pos) override;
 };
 
 

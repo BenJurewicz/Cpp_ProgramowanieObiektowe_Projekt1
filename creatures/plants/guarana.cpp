@@ -11,3 +11,7 @@ void Guarana::handleCollision(Creature *collider) {
                             std::to_string(collider->getStrength() + 3) + ")");
     collider->setStrength(collider->getStrength() + 3);
 }
+
+void Guarana::clone(Point<int> pos) {
+    world->addCreature(std::make_shared<Guarana>(pos, world));
+}

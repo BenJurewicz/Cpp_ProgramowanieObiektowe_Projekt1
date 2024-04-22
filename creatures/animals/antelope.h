@@ -15,6 +15,8 @@ public:
     char getIcon() const override;
 
     bool tryRunningAway(Creature *creature) override;
+
+    void clone(Point<int> pos) override;
 };
 
 

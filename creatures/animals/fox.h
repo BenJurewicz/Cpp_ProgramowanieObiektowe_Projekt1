@@ -15,6 +15,8 @@ public:
     Fox(Point<int> startingPoint, World *world);
 
     char getIcon() const override;
+
+    void clone(Point<int> pos) override;
 };
 
 

@@ -9,3 +9,7 @@ Sheep::Sheep(Point<int> startingPosition, World *world) : Animal(4, 4, startingP
 char Sheep::getIcon() const {
     return 'S';
 }
+
+void Sheep::clone(Point<int> pos) {
+    world->addCreature(std::make_shared<Sheep>(pos, world));
+}

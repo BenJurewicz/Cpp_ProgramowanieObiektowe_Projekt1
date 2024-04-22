@@ -31,7 +31,7 @@ class Console {
 
     Console(int width, int height);
 public:
-    static Console* init(int width = 100, int height = 60);
+    static Console* init(int width = 100, int height = 36);
     static Console* getInstance();
     static void destroyInstance();
 

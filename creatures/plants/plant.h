@@ -7,11 +7,15 @@ class Plant : public Creature {
 protected:
     Plant(int strength, Point<int> position, World *world);
 
-    virtual void trySpreading() const;
+    virtual void trySpreading();
 
 public:
 
     void doTurn() override;
+
+    static std::shared_ptr<Plant> deserialize(std::ifstream &stream, World *world);
+
+    void serialize(std::ofstream &stream) override;
 };
 
 

@@ -12,3 +12,7 @@ void WilczeJagody::handleCollision(Creature *collider) {
 char WilczeJagody::getIcon() const {
     return 'w';
 }
+
+void WilczeJagody::clone(Point<int> pos) {
+    world->addCreature(std::make_shared<WilczeJagody>(pos, world));
+}

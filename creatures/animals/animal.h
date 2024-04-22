@@ -2,6 +2,7 @@
 #define PROJEKT1CPP_ANIMAL_H
 
 #include "../creature.h"
+#include <memory>
 
 class World;
 
@@ -19,9 +20,13 @@ protected:
 
 public:
 
+    static std::shared_ptr<Animal> deserialize(std::ifstream &stream, World *world);
+
     void doTurn() override;
 
     void collide(Creature *creature) override;
+
+    void serialize(std::ofstream &stream) override;
 };
 
 

@@ -123,7 +123,7 @@ void Console::drawRectangle(int y, int x, int height, int width, chtype characte
 
 inline char Console::getChar() {
     return getch();
-//    return (char)wgetch(win);
+//    return (char) wgetch(win);
 }
 
 #pragma clang diagnostic pop

@@ -26,3 +26,7 @@ void BarszczSosnowskiego::doTurn() {
         }
     }
 }
+
+void BarszczSosnowskiego::clone(Point<int> pos) {
+    world->addCreature(std::make_shared<BarszczSosnowskiego>(pos, world));
+}

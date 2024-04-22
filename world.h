@@ -57,6 +57,13 @@ public:
 
     void addCreature(const std::shared_ptr<Creature> &creature);
 
+    [[maybe_unused]] [[nodiscard]] int getHeight() const;
+
+    [[maybe_unused]] [[nodiscard]] int getWidth() const;
+
+//    void load();
+//
+//    void save();
 
 };
 

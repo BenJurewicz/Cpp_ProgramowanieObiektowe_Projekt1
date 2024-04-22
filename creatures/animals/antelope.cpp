@@ -36,3 +36,7 @@ std::vector<Point<int>> Antelope::getNeighbours() const {
 
     return newNeighbours;
 }
+
+void Antelope::clone(Point<int> pos) {
+    world->addCreature(std::make_shared<Antelope>(pos, world));
+}

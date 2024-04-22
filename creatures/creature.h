@@ -1,6 +1,7 @@
 #ifndef PROJEKT1CPP_CREATURE_H
 #define PROJEKT1CPP_CREATURE_H
 
+#include <fstream>
 #include "../Point.h"
 #include "../world.h"
 
@@ -37,21 +38,22 @@ public:
 
     virtual bool didDeflectAttack(Creature *creature);
 
+    virtual void clone(Point<int> pos);
+
     /**
      * @return true if the creature ran away, false otherwise
      */
     virtual bool tryRunningAway(Creature *creature);
 
-    //TODO
-//    virtual void createChild(Point<int> position) = 0;
-
-    [[nodiscard]] int getStrength() const;
+    [[nodiscard]] virtual int getStrength() const;
 
     void setStrength(int newStrength);
 
     [[nodiscard]] int getInitiative() const;
 
     [[nodiscard]] int getAge() const;
+
+    void setAge(int age);
 
     [[nodiscard]] bool getIsAlive() const;
 
@@ -67,6 +69,8 @@ public:
     Point<int> getPosition();
 
     void setPosition(Point<int> point);
+
+    virtual void serialize(std::ofstream &stream) = 0;
 
 };
 

@@ -12,6 +12,8 @@
 #include "creatures/plants/barszczSosnowskiego.h"
 #include "creatures/animals/fox.h"
 #include "creatures/animals/antelope.h"
+#include "creatures/animals/turtle.h"
+#include "creatures/animals/human.h"
 
 void World::resizeMap() {
     map.resize(worldHeight);
@@ -51,10 +53,13 @@ void World::createSpecies() {
 }
 
 void World::createCreatures() {
+    /// Human
+    addCreature(std::make_shared<Human>(Point<int>(2, 2), this));
     /// Animals
     createSpecies<Wolf>();
     createSpecies<Sheep>();
     createSpecies<Fox>();
+    createSpecies<Turtle>();
     createSpecies<Antelope>();
     /// Plants
     createSpecies<Mlecz>();
@@ -65,7 +70,7 @@ void World::createCreatures() {
 }
 
 World::World(int worldHeight, int worldWidth) : World(worldHeight, worldWidth, 1,
-                                                      (int) (worldWidth * worldHeight * 0.05)) {}
+                                                      (int) (worldWidth * worldHeight * 0.02)) {}
 
 World::World(int worldHeight, int worldWidth, int minSpeciesCount, int maxSpeciesCount) : worldHeight(worldHeight),
                                                                                           worldWidth(worldWidth),
@@ -139,16 +144,17 @@ bool World::isOccupied(Point<int> point) {
 
 void World::startLoopNoInput(Console &console, int turns) {
     console << clearBuffer;
-    drawMap(console, 1, 1);
     console.refreshWindow();
+    drawMap(console, 1, 1);
+    Log::getInstance()->draw(worldHeight + 4, 1, console.getWidth() - 2);
     for (int i = 0; i < turns; i++) {
         doTurn();
         drawMap(console, 1, 1);
-        Log::getInstance()->draw(worldHeight + 3, 1, console.getWidth() - 2, 18);
+        Log::getInstance()->draw(worldHeight + 4, 1, console.getWidth() - 2);
         console << moveCursor(1, 1) << "Creature count: " << creatures.size()
                 << flushBuffer; // TODO remove before submission
         console.refreshWindow();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
 
@@ -159,4 +165,19 @@ void World::moveCreature(const std::shared_ptr<Creature> &creature, Point<int> p
 
     creature->setPosition(point);
 }
+
+int World::getHeight() const {
+    return worldHeight;
+}
+
+[[maybe_unused]] int World::getWidth() const {
+    return worldWidth;
+}
+
+//void World::save() {
+//    std::ofstream stream("save.txt");
+//    for(auto creature: creatures) {
+//        creature->serialize();
+//    }
+//}
 

@@ -43,6 +43,8 @@ add_executable(Projekt1Cpp main.cpp
         creatures/animals/fox.h
         creatures/animals/antelope.cpp
         creatures/animals/antelope.h
+        creatures/animals/turtle.cpp
+        creatures/animals/turtle.h
 )
 
 target_link_libraries(Projekt1Cpp ${CURSES_LIBRARIES})

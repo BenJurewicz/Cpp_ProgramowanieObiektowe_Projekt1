@@ -10,6 +10,8 @@ public:
     char getIcon() const override;
 
     void handleCollision(Creature *collider) override;
+
+    void clone(Point<int> pos) override;
 };
 
 

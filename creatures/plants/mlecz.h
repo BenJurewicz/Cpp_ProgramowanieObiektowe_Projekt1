@@ -9,6 +9,10 @@ public:
     Mlecz(Point<int> startingPoint, World *world);
 
     char getIcon() const override;
+
+    void clone(Point<int> pos) override;
+
+    void doTurn() override;
 };
 
 

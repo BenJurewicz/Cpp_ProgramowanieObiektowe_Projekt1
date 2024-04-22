@@ -13,6 +13,8 @@ public:
     void doTurn() override;
 
     char getIcon() const override;
+
+    void clone(Point<int> pos) override;
 };
 
 

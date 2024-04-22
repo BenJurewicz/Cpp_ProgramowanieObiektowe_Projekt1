@@ -14,7 +14,7 @@ bool Fox::isTileSafe(Point<int> point) const {
         if (typeid(creature) == typeid(this)) {
             return true;
         }
-        return strength >= creature->getStrength();
+        return getStrength() >= creature->getStrength();
     }
     return true;
 }
@@ -26,4 +26,8 @@ std::vector<Point<int>> Fox::getNeighbours() const {
     std::copy_if(neighbours.begin(), neighbours.end(), std::back_inserter(safeNeighbours),
                  [this](Point<int> point) { return isTileSafe(point); });
     return safeNeighbours;
+}
+
+void Fox::clone(Point<int> pos) {
+    world->addCreature(std::make_shared<Fox>(pos, world));
 }

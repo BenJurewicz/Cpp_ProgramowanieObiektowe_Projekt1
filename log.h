@@ -22,7 +22,7 @@ public:
 
     static void destroyInstance();
 
-    void draw(int y, int x, int width, int height) const;
+    void draw(int y, int x, int width) const;
 
     void add(const std::string &message);
 

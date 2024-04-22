@@ -1,4 +1,5 @@
 #include "creature.h"
+#include <memory>
 
 Creature::Creature(int strength, int initiative, Point<int> position, World *world) : strength(strength),
                                                                                       initiative(initiative),
@@ -66,8 +67,8 @@ void Creature::setPosition(Point<int> point) {
 std::string Creature::toString() const {
     std::stringstream ss;
     ss << getIcon() << ": " << position.toString();
-    ss << " Age: " << age;
-    ss << " Str: " << strength;
+    ss << " Age: " << getAge();
+    ss << " Str: " << getStrength();
     return ss.str();
 }
 
@@ -92,7 +93,7 @@ void Creature::collide(Creature *creature) {
 
 void Creature::fight(Creature *creature) {
     Log &log = *Log::getInstance();
-    if (strength >= creature->getStrength()) {
+    if (getStrength() >= creature->getStrength()) {
         log.add(toString() + " attacked and killed " + creature->toString());
         creature->kill();
     } else {
@@ -115,6 +116,12 @@ bool Creature::tryRunningAway(Creature *creature) {
     return false;
 }
 
+void Creature::clone(Point<int> pos) {
+}
+
+void Creature::setAge(int age) {
+    Creature::age = age;
+}
 
 Console &operator<<(Console &console, const Creature &creature) {
     console << creature.toString();
